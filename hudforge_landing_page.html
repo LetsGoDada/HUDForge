@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HUDForge - Next-Gen Gaming HUD & Overlay Studio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            black: '#090a0f',
+                            card: '#12151e',
+                            border: '#1f2638',
+                            cyan: '#00f0ff',
+                            magenta: '#ff0055',
+                            accent: '#7000ff'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #090a0f;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .glow-cyan {
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.25);
+        }
+        .glow-cyan-hover:hover {
+            box-shadow: 0 0 35px rgba(0, 240, 255, 0.5);
+        }
+        .glow-magenta {
+            box-shadow: 0 0 25px rgba(255, 0, 85, 0.25);
+        }
+        .text-gradient-cyan {
+            background: linear-gradient(135deg, #00f0ff 0%, #7000ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .bg-grid-pattern {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #090a0f;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #1f2638;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #00f0ff;
+        }
+    </style>
+</head>
+<body class="bg-grid-pattern min-h-screen flex flex-col justify-between">
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-32 opacity-0 transition-all duration-300 ease-in-out bg-cyber-card border border-cyber-cyan text-cyber-cyan px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+        <i class="fa-solid fa-circle-check text-lg"></i>
+        <span id="toast-message" class="text-sm font-medium">Link copied to clipboard!</span>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-40 backdrop-blur-xl bg-cyber-black/80 border-b border-cyber-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyber-cyan to-cyber-accent flex items-center justify-center text-black font-extrabold text-xl shadow-lg shadow-cyber-cyan/20">
+                    <i class="fa-solid fa-crosshair"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-black tracking-wider text-white">HUD<span class="text-cyber-cyan">FORGE</span></span>
+                    <span class="hidden sm:inline-block text-xs font-mono px-2 py-0.5 rounded bg-cyber-border text-gray-400 ml-2">v1.0.0</span>
+                </div>
+            </div>
+
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
+                <a href="#features" class="hover:text-cyber-cyan transition-colors">Features</a>
+                <a href="#downloads" class="hover:text-cyber-cyan transition-colors">Downloads</a>
+                <a href="#setup" class="hover:text-cyber-cyan transition-colors">Setup Guide</a>
+                <a href="#plugins" class="hover:text-cyber-cyan transition-colors">Plugins & Code</a>
+            </nav>
+
+            <div class="flex items-center gap-4">
+                <a href="https://github.com/LetsGoDada/HubForge" target="_blank" class="p-2.5 rounded-xl border border-cyber-border bg-cyber-card hover:bg-cyber-border text-gray-300 hover:text-white transition-all">
+                    <i class="fa-brands fa-github text-lg"></i>
+                </a>
+                <a href="https://github.com/LetsGoDada/HubForge/releases/download/1.0.0/HUDForge.exe" 
+                   target="_blank" 
+                   download
+                   class="hidden sm:flex items-center gap-2 bg-gradient-to-r from-cyber-cyan to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-cyber-cyan/20 glow-cyan-hover transition-all">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Download App</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+        <!-- Hero Section -->
+        <section class="relative pt-12 pb-20 md:pt-20 md:pb-32 overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center max-w-3xl mx-auto">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyber-card border border-cyber-cyan/30 text-cyber-cyan text-xs font-mono mb-6 shadow-sm">
+                        <span class="flex h-2 w-2 rounded-full bg-cyber-cyan animate-pulse"></span>
+                        HUDForge Studio Release v1.0.0 is Live
+                    </div>
+                    <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight leading-none mb-6">
+                        Forge Custom <br>
+                        <span class="text-gradient-cyan">Overlays & Gaming HUDs</span>
+                    </h1>
+                    <p class="text-lg text-gray-400 mb-10 leading-relaxed">
+                        A lightweight, ultra-customizable desktop suite built for streamers, gamers, and developers. Build widgets, visualize stats, and load Python plugins dynamically.
+                    </p>
+
+                    <!-- CTA Download Buttons -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-xl mx-auto" id="downloads">
+                        <!-- EXE Direct Link -->
+                        <a href="https://github.com/LetsGoDada/HubForge/releases/download/1.0.0/HUDForge.exe" 
+                           target="_blank" 
+                           download
+                           class="w-full sm:w-auto flex-1 flex items-center justify-center gap-3 bg-gradient-to-r from-cyber-cyan to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-extrabold px-8 py-4 rounded-xl shadow-xl shadow-cyber-cyan/20 glow-cyan-hover transition-all text-base transform hover:-translate-y-0.5">
+                            <i class="fa-solid fa-file-executable text-xl"></i>
+                            <div class="text-left">
+                                <div class="text-xs uppercase tracking-wider opacity-80">Official Executable</div>
+                                <div class="text-sm font-bold">Download HUDForge.exe</div>
+                            </div>
+                        </a>
+
+                        <!-- Plugins ZIP Direct Link -->
+                        <a href="https://github.com/LetsGoDada/HubForge/releases/download/1.0.0/Plugins.zip" 
+                           target="_blank" 
+                           download
+                           class="w-full sm:w-auto flex-1 flex items-center justify-center gap-3 bg-cyber-card border border-cyber-cyan/40 hover:border-cyber-cyan text-white font-extrabold px-8 py-4 rounded-xl shadow-xl hover:bg-cyber-border transition-all text-base transform hover:-translate-y-0.5">
+                            <i class="fa-solid fa-box-archive text-cyber-cyan text-xl"></i>
+                            <div class="text-left">
+                                <div class="text-xs uppercase tracking-wider text-gray-400">Plugin Bundle</div>
+                                <div class="text-sm font-bold">Download Plugins.zip</div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="mt-6 text-xs text-gray-500 font-mono">
+                        Supports Windows 10/11 • 64-Bit Architecture • Standalone Executable
+                    </div>
+                </div>
+
+                <!-- App Mockup Preview -->
+                <div class="mt-16 relative max-w-5xl mx-auto">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-cyber-cyan via-cyber-accent to-cyber-magenta rounded-2xl blur-xl opacity-30"></div>
+                    <div class="relative rounded-2xl bg-cyber-card border border-cyber-border overflow-hidden shadow-2xl">
+                        <!-- Mockup Titlebar -->
+                        <div class="bg-cyber-black px-4 py-3 border-b border-cyber-border flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
+                                <span class="w-3 h-3 rounded-full bg-yellow-500 inline-block"></span>
+                                <span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span>
+                                <span class="ml-4 text-xs font-mono text-gray-400">HUDForge Studio v1.0.0 - Canvas View</span>
+                            </div>
+                            <div class="text-xs font-mono text-cyber-cyan">FPS: 144 | GPU: 38°C</div>
+                        </div>
+                        <!-- Mockup Body -->
+                        <div class="p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-6 bg-cyber-black/50">
+                            <div class="bg-cyber-card border border-cyber-border p-5 rounded-xl">
+                                <div class="text-xs font-mono text-gray-400 mb-2">SYSTEM METRICS</div>
+                                <div class="text-2xl font-black text-cyber-cyan mb-1">CPU 24%</div>
+                                <div class="w-full bg-cyber-border h-2 rounded-full overflow-hidden">
+                                    <div class="bg-cyber-cyan h-full w-1/4"></div>
+                                </div>
+                            </div>
+                            <div class="bg-cyber-card border border-cyber-border p-5 rounded-xl">
+                                <div class="text-xs font-mono text-gray-400 mb-2">NETWORK OVERLAY</div>
+                                <div class="text-2xl font-black text-green-400 mb-1">12 ms</div>
+                                <div class="text-xs text-gray-400">Ping: Stable | Packets: 0% loss</div>
+                            </div>
+                            <div class="bg-cyber-card border border-cyber-border p-5 rounded-xl">
+                                <div class="text-xs font-mono text-gray-400 mb-2">ACTIVE PLUGIN</div>
+                                <div class="text-2xl font-black text-cyber-magenta mb-1">Crosshair v2</div>
+                                <div class="text-xs text-cyber-magenta font-mono">Status: Active</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Installation & Directory Setup -->
+        <section id="setup" class="py-16 bg-cyber-black/60 border-y border-cyber-border">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-12">
+                    <h2 class="text-3xl font-bold text-white mb-3">Directory & Setup Guide</h2>
+                    <p class="text-gray-400 text-sm">Follow these quick steps to get HUDForge running with custom Python plugins.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Step 1 -->
+                    <div class="bg-cyber-card border border-cyber-border p-6 rounded-2xl relative">
+                        <div class="w-8 h-8 rounded-lg bg-cyber-cyan/10 border border-cyber-cyan text-cyber-cyan flex items-center justify-center font-bold text-sm mb-4">1</div>
+                        <h3 class="text-lg font-bold text-white mb-2">Download Application</h3>
+                        <p class="text-sm text-gray-400 mb-4">Get the latest executable file directly from GitHub releases.</p>
+                        <a href="https://github.com/LetsGoDada/HubForge/releases/download/1.0.0/HUDForge.exe" 
+                           target="_blank" download 
+                           class="inline-flex items-center gap-2 text-xs font-mono text-cyber-cyan hover:underline">
+                            <i class="fa-solid fa-download"></i> Get HUDForge.exe
+                        </a>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="bg-cyber-card border border-cyber-border p-6 rounded-2xl relative">
+                        <div class="w-8 h-8 rounded-lg bg-cyber-cyan/10 border border-cyber-cyan text-cyber-cyan flex items-center justify-center font-bold text-sm mb-4">2</div>
+                        <h3 class="text-lg font-bold text-white mb-2">Extract Plugins</h3>
+                        <p class="text-sm text-gray-400 mb-4">Download `Plugins.zip` and extract its contents into your local plugins directory.</p>
+                        <a href="https://github.com/LetsGoDada/HubForge/releases/download/1.0.0/Plugins.zip" 
+                           target="_blank" download 
+                           class="inline-flex items-center gap-2 text-xs font-mono text-cyber-cyan hover:underline">
+                            <i class="fa-solid fa-file-zipper"></i> Get Plugins.zip
+                        </a>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="bg-cyber-card border border-cyber-border p-6 rounded-2xl relative">
+                        <div class="w-8 h-8 rounded-lg bg-cyber-cyan/10 border border-cyber-cyan text-cyber-cyan flex items-center justify-center font-bold text-sm mb-4">3</div>
+                        <h3 class="text-lg font-bold text-white mb-2">Folder Layout</h3>
+                        <p class="text-sm text-gray-400 mb-2">Ensure your local folder matches this structure:</p>
+                        <div class="bg-cyber-black p-3 rounded-xl border border-cyber-border font-mono text-xs text-gray-300">
+                            HUDForge/<br>
+                            ├── HUDForge.exe<br>
+                            └── plugins/<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;├── crosshair.py<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;└── sys_monitor.py
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code & Plugin Section -->
+        <section id="plugins" class="py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+                    <div>
+                        <h2 class="text-3xl font-bold text-white mb-2">Custom Python Plugins</h2>
+                        <p class="text-gray-400 text-sm">Preview code snippets for custom widgets included in the plugin package.</p>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <button onclick="copyToClipboard('https://github.com/LetsGoDada/HubForge/releases/download/1.0.0/Plugins.zip')" class="px-4 py-2 rounded-xl border border-cyber-border bg-cyber-card hover:bg-cyber-border text-xs font-mono text-gray-300 flex items-center gap-2 transition-all">
+                            <i class="fa-regular fa-copy"></i> Copy Plugin URL
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Code Block Card -->
+                <div class="bg-cyber-card border border-cyber-border rounded-2xl overflow-hidden shadow-2xl">
+                    <div class="bg-cyber-black px-6 py-4 border-b border-cyber-border flex items-center justify-between">
+                        <div class="flex items-center gap-3 font-mono text-xs text-gray-400">
+                            <i class="fa-brands fa-python text-cyber-cyan text-base"></i>
+                            <span>plugins/crosshair.py</span>
+                        </div>
+                        <button onclick="copyCode()" class="text-xs font-mono text-cyber-cyan hover:text-white transition-colors flex items-center gap-1.5">
+                            <i class="fa-regular fa-copy"></i> Copy Code
+                        </button>
+                    </div>
+                    <div class="p-6 overflow-x-auto custom-scrollbar">
+<pre id="code-sample" class="font-mono text-xs text-gray-300 leading-relaxed"><code><span class="text-purple-400">import</span> tkinter <span class="text-purple-400">as</span> tk
+
+<span class="text-purple-400">class</span> <span class="text-yellow-300">HUDCrosshairPlugin</span>:
+    <span class="text-purple-400">def</span> <span class="text-blue-400">__init__</span>(self, root):
+        self.root = root
+        self.root.title(<span class="text-green-300">"HUDForge - Custom Crosshair"</span>)
+        self.root.attributes(<span class="text-green-300">"-topmost"</span>, True)
+        self.root.overrideredirect(True)
+        self.root.config(bg=<span class="text-green-300">"#000000"</span>)
+        self.root.wm_attributes(<span class="text-green-300">"-transparentcolor"</span>, <span class="text-green-300">"#000000"</span>)
+
+        self.canvas = tk.Canvas(root, width=<span class="text-orange-400">100</span>, height=<span class="text-orange-400">100</span>, bg=<span class="text-green-300">"#000000"</span>, highlightthickness=<span class="text-orange-400">0</span>)
+        self.canvas.pack()
+
+        <span class="text-gray-500"># Draw neon cyan crosshair overlay</span>
+        self.canvas.create_line(<span class="text-orange-400">50</span>, <span class="text-orange-400">35</span>, <span class="text-orange-400">50</span>, <span class="text-orange-400">65</span>, fill=<span class="text-green-300">"#00f0ff"</span>, width=<span class="text-orange-400">2</span>)
+        self.canvas.create_line(<span class="text-orange-400">35</span>, <span class="text-orange-400">50</span>, <span class="text-orange-400">65</span>, <span class="text-orange-400">50</span>, fill=<span class="text-green-300">"#00f0ff"</span>, width=<span class="text-orange-400">2</span>)
+
+<span class="text-purple-400">if</span> __name__ == <span class="text-green-300">"__main__"</span>:
+    app = tk.Tk()
+    plugin = HUDCrosshairPlugin(app)
+    app.mainloop()</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-cyber-black border-t border-cyber-border py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <span class="text-sm font-bold text-white">HUD<span class="text-cyber-cyan">FORGE</span></span>
+                <span class="text-xs text-gray-500">© 2026 LetsGoDada. Released under MIT License.</span>
+            </div>
+
+            <div class="flex items-center gap-6 text-xs text-gray-400">
+                <a href="https://github.com/LetsGoDada/HubForge/releases/download/1.0.0/HUDForge.exe" target="_blank" download class="hover:text-cyber-cyan transition-colors">Direct App Link</a>
+                <a href="https://github.com/LetsGoDada/HubForge/releases/download/1.0.0/Plugins.zip" target="_blank" download class="hover:text-cyber-cyan transition-colors">Direct Plugins Link</a>
+                <a href="https://github.com/LetsGoDada/HubForge" target="_blank" class="hover:text-cyber-cyan transition-colors">GitHub Repository</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Script -->
+    <script>
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-y-32', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-32', 'opacity-0');
+            }, 3000);
+        }
+
+        function copyToClipboard(text) {
+            const dummy = document.createElement('textarea');
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+            showToast('Link copied to clipboard!');
+        }
+
+        function copyCode() {
+            const codeText = document.getElementById('code-sample').innerText;
+            const dummy = document.createElement('textarea');
+            document.body.appendChild(dummy);
+            dummy.value = codeText;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+            showToast('Python plugin snippet copied!');
+        }
+    </script>
+</body>
+</html>
